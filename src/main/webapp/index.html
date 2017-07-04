@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Vue.js Sample Project</title>
+<linkhref="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+	<div id="app">
+		<div class="container">
+			<h1> 도 깨 비!</h1>
+			<ul class="list_group">
+				<board v-for = "board in boards" :board="board">
+				</board>
+			</ul>
+			<pre>{{$data}}</pre>
+		</div>
+	</div>
+	<template id="template-board-raw">
+		<li class="template-board-raw">
+			{{board.no}} | {{board.writer}} | {{board.subject}} | {{board.content}} | {{board.hit}}
+		</li>
+	</template>
+</body> 
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.4/vue.js"></script>
+<script type="text/javascript">
+	Vue.component('board', {
+	    template: '#template-board-raw',
+	    props: ['board'],
+	})
+	
+var vm = new Vue({
+	    el: '#app',
+	    data: {
+	        boards: []
+	    },
+	    mounted: function () {
+	    	$.get('/main',function(data){
+	    		vm.boards = data;
+	    	})
+	    }
+	});
+</script>
+</html>

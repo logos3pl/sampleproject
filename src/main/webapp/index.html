@@ -3,31 +3,97 @@
 <head>
 <meta charset="UTF-8">
 <title>Vue.js Sample Project</title>
-<linkhref="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.4/vue.js"></script>
 </head>
 <body>
-	<div id="app">
-		<div class="container">
-			<h1> 도 깨 비!</h1>
-			<ul class="list_group">
-				<board v-for = "board in boards" :board="board">
-				</board>
-			</ul>
+<main>
+	<div class="container">
+	<a href="/vueResource.html">Vue-Resource.html</a>
+	<hr/>
+	  	<h1>Sample</h1>
+		<div id="app">
+			<table class="table table-striped">
+				<tr>
+					<th>#</th>
+					<th>Writer</th>
+					<th>Subject</th>
+					<th>Content</th>
+					<th>Hit</th>
+					<th>LIKE!</th>
+				</tr>
+				<tr v-for="board in boards" is="board" :board="board"></tr>
+			</table>
+			<p class="lead">Here's a list of all your stories.</p>
 			<pre>{{$data}}</pre>
 		</div>
 	</div>
-	<template id="template-board-raw">
-		<li class="template-board-raw">
-			{{board.no}} | {{board.writer}} | {{board.subject}} | {{board.content}} | {{board.hit}}
-		</li>
-	</template>
+</main>		
+<template id="template-board-raw">
+	<tr>
+		<td>
+			{{board.no}}
+		</td>
+		<td>
+			<span>
+				{{board.writer}}
+			</span>
+		</td>
+		<td>
+			<span>
+				{{board.subject}}
+			</span>
+		</td>
+		<td>
+			<span>
+				{{board.content}}
+			</span>
+		</td>
+		<td>
+			{{board.hit}}
+		</td>
+		<td>
+			<div class="btn-group">
+				<button @click="upvoteBoard(board)" class="btn btn-primary">
+					Upvote
+				</button>
+				<button @click="deleteBoard(board)" class="btn btn-danger">
+					Delete
+				</button>
+			</div>
+		</td>
+	</tr>
+</template>
 </body> 
-<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.4/vue.js"></script>
 <script type="text/javascript">
 	Vue.component('board', {
 	    template: '#template-board-raw',
 	    props: ['board'],
+	    methods:{
+	    	upvoteBoard:function(board){
+	    		console.log("board = "+board);
+	    		board.hit++;
+	    		$.ajax({
+	    			url:'/upvoteBoard/'+board.no,
+	    			type:'PATCH',
+	    			data:board,
+	    		}).done(function(data){
+	    			alert("Update Row Count : "+data.ret);
+	    		});
+	    	},
+	    	deleteBoard:function(board){
+	    		var index = vm.boards.indexOf(board);
+	    		console.log("index : "+index);
+	    		
+	    		vm.boards.splice(index,1)
+	    		
+	    		$.ajax({
+	    			url:'/deleteBoard/'+board.no,
+	    			type:'DELETE'
+	    		});
+	    	}
+	    },
 	})
 	
 var vm = new Vue({
